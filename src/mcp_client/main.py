@@ -26,9 +26,26 @@ class MCPClient():
         if transport_type == 'sse':
             self.mcp_client = await self.exit_stack.enter_async_context(Client(DEMO_MCP_SERVER_URL))
         elif transport_type == 'stdio':
+            # transport = StdioTransport(
+            #     command=DEMO_MCP_SERVER_PYTHON_PATH,
+            #     args=[DEMO_MCP_SERVER_SCRIPT_PATH],
+            # )
             transport = StdioTransport(
-                command=DEMO_MCP_SERVER_PYTHON_PATH,
-                args=[DEMO_MCP_SERVER_SCRIPT_PATH],
+                command='wsl',
+                args=[
+                    '-u',
+                    'root',
+                    'docker',
+                    'run',
+                    '--rm',
+                    '-i',
+                    '-e',
+                    'GITHUB_PERSONAL_ACCESS_TOKEN',
+                    'mcp/github',
+                ],
+                env={
+                    'GITHUB_PERSONAL_ACCESS_TOKEN': os.getenv("GITHUB_PERSONAL_ACCESS_TOKEN"),
+                }
             )
             self.mcp_client = await self.exit_stack.enter_async_context(Client(transport=transport))
 
@@ -90,6 +107,6 @@ async def run():
     client = MCPClient()
     try:
         await client.connect_to_server(transport_type='stdio')
-        await client.process_query("what is the weather in Taitong?")
+        await client.process_query("I want to search user piggaycheng on github")
     finally:
         await client.cleanup()

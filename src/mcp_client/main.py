@@ -1,33 +1,44 @@
 import os
-from typing import Optional
+from typing import Optional, Literal
 from contextlib import AsyncExitStack
 
 from dotenv import load_dotenv
 from ollama import AsyncClient
 from fastmcp import Client
+from fastmcp.client.transports import StdioTransport
 
 
 # Load environment variables from .env file
 load_dotenv()
+DEMO_MCP_SERVER_URL = os.getenv("DEMO_MCP_SERVER_URL")
+DEMO_MCP_SERVER_PYTHON_PATH = os.getenv("DEMO_MCP_SERVER_PYTHON_PATH")
+DEMO_MCP_SERVER_SCRIPT_PATH = os.getenv("DEMO_MCP_SERVER_SCRIPT_PATH")
 
 
 class MCPClient():
     def __init__(self):
         self.exit_stack = AsyncExitStack()
-        self.sse_client: Optional[Client] = None
+        self.mcp_client: Optional[Client] = None
 
-    async def connect_to_server(self):
+    async def connect_to_server(self, transport_type=Literal['stdio', 'sse']):
         """Connect to an MCP server"""
 
-        self.sse_client = await self.exit_stack.enter_async_context(Client(os.getenv("DEMO_MCP_SERVER_URL")))
+        if transport_type == 'sse':
+            self.mcp_client = await self.exit_stack.enter_async_context(Client(DEMO_MCP_SERVER_URL))
+        elif transport_type == 'stdio':
+            transport = StdioTransport(
+                command=DEMO_MCP_SERVER_PYTHON_PATH,
+                args=[DEMO_MCP_SERVER_SCRIPT_PATH],
+            )
+            self.mcp_client = await self.exit_stack.enter_async_context(Client(transport=transport))
 
-        response = await self.sse_client.list_tools()
+        response = await self.mcp_client.list_tools()
         tools = response
         print("Connected to server with tools:", [tool.name for tool in tools])
 
     async def process_query(self, query: str) -> str:
         """Process a query using Ollama and available tools"""
-        response = await self.sse_client.list_tools()
+        response = await self.mcp_client.list_tools()
         available_tools = [{
             "name": tool.name,
             "description": tool.description,
@@ -78,7 +89,7 @@ class MCPClient():
 async def run():
     client = MCPClient()
     try:
-        await client.connect_to_server()
+        await client.connect_to_server(transport_type='stdio')
         await client.process_query("what is the weather in Taitong?")
     finally:
         await client.cleanup()

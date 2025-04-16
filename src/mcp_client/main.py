@@ -3,9 +3,8 @@ from typing import Optional
 from contextlib import AsyncExitStack
 
 from dotenv import load_dotenv
-from mcp import ClientSession, types
-from mcp.client.sse import sse_client
 from ollama import AsyncClient
+from fastmcp import Client
 
 
 # Load environment variables from .env file
@@ -14,30 +13,27 @@ load_dotenv()
 
 class MCPClient():
     def __init__(self):
-        self.session: Optional[ClientSession] = None
         self.exit_stack = AsyncExitStack()
+        self.sse_client: Optional[Client] = None
 
     async def connect_to_server(self):
         """Connect to an MCP server"""
 
-        sse_transport = await self.exit_stack.enter_async_context(sse_client(os.getenv("DEMO_MCP_SERVER_URL")))
-        read, write = sse_transport
-        self.session = await self.exit_stack.enter_async_context(ClientSession(read, write))
+        self.sse_client = await self.exit_stack.enter_async_context(Client(os.getenv("DEMO_MCP_SERVER_URL")))
 
-        await self.session.initialize()
-        response = await self.session.list_tools()
-        tools = response.tools
+        response = await self.sse_client.list_tools()
+        tools = response
         print("Connected to server with tools:", [tool.name for tool in tools])
 
     async def process_query(self, query: str) -> str:
         """Process a query using Ollama and available tools"""
-
-        response = await self.session.list_tools()
+        response = await self.sse_client.list_tools()
         available_tools = [{
             "name": tool.name,
             "description": tool.description,
             "input_schema": tool.inputSchema
-        } for tool in response.tools]
+        } for tool in response]
+        print("Available tools:", available_tools)
         messages = [
             {
                 "role": "system",

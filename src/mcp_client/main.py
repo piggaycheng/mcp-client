@@ -14,9 +14,9 @@ from llama_index.llms.ollama import Ollama
 # Load environment variables from .env file
 load_dotenv()
 DEMO_MCP_SERVER_URL = os.getenv("DEMO_MCP_SERVER_URL")
-GITHUB_PERSONAL_ACCESS_TOKEN = os.getenv("GITHUB_PERSONAL_ACCESS_TOKEN")
 OLLAMA_HOST = os.getenv("OLLAMA_HOST")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL")
+POSTGRES_CONNECTION_STRING = os.getenv("POSTGRES_CONNECTION_STRING")
 
 
 llm = Ollama(model=OLLAMA_MODEL, base_url=OLLAMA_HOST, request_timeout=60)
@@ -42,13 +42,9 @@ class MCPClient():
                     'run',
                     '--rm',
                     '-i',
-                    '-e',
-                    'GITHUB_PERSONAL_ACCESS_TOKEN',
-                    'mcp/github',
-                ],
-                env={
-                    'GITHUB_PERSONAL_ACCESS_TOKEN': GITHUB_PERSONAL_ACCESS_TOKEN,
-                }
+                    'mcp/postgres',
+                    POSTGRES_CONNECTION_STRING,
+                ]
             )
             self.mcp_tool_spec = McpToolSpec(client=self.mcp_client)
 
@@ -71,7 +67,7 @@ class MCPClient():
 async def run():
     client = MCPClient()
     await client.connect_to_server(transport_type='stdio')
-    await client.process_query("Get repo mcp-server which owned by piggaycheng in github, branch main")
+    await client.process_query("select * from psu_info")
 
 
 # -------------------------test----------------------------

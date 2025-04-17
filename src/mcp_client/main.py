@@ -42,6 +42,8 @@ class MCPClient():
                     'run',
                     '--rm',
                     '-i',
+                    '-e',
+                    'GITHUB_PERSONAL_ACCESS_TOKEN',
                     'mcp/github',
                 ],
                 env={
@@ -62,14 +64,14 @@ class MCPClient():
             tools=tools,
             verbose=True,
         )
-        response = await agent.achat(query)
+        response = await agent.aquery(query)
         print("Response:", response)
 
 
 async def run():
     client = MCPClient()
     await client.connect_to_server(transport_type='stdio')
-    await client.process_query("Search user in github")
+    await client.process_query("Get repo mcp-server which owned by piggaycheng in github, branch main")
 
 
 # -------------------------test----------------------------

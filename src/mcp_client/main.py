@@ -50,16 +50,17 @@ class MCPClient():
                     'GITHUB_PERSONAL_ACCESS_TOKEN': GITHUB_PERSONAL_ACCESS_TOKEN,
                 }
             )
-            self.mcp_tool_spec = McpToolSpec(client=self.mcp_client)
+            self.mcp_tool_spec = McpToolSpec(
+                client=self.mcp_client, allowed_tools=['search_repositories', 'search_users', 'list_commits'])
 
-        response = await self.mcp_client.list_tools()
-        print("Tools: ", [tool.name for tool in response.tools], end="\n\n")
+        response = await self.mcp_tool_spec.fetch_tools()
+        print("Allowed tools: ", [tool.name for tool in response], end="\n\n")
 
     async def process_query(self, query: str) -> str:
         """Process a query using Ollama and available tools"""
 
         tools = await self.mcp_tool_spec.to_tool_list_async()
-        agent = FunctionCallingAgent.from_tools(
+        agent = ReActAgent.from_tools(
             llm=llm,
             tools=tools,
             verbose=True,
@@ -71,7 +72,7 @@ class MCPClient():
 async def run():
     client = MCPClient()
     await client.connect_to_server(transport_type='stdio')
-    await client.process_query("Get repo mcp-server which owned by piggaycheng in github, branch main")
+    await client.process_query("請幫我在github上搜尋piggaycheng/mcp-client repository, 並找出main branch上會後一個commit的message")
 
 
 # -------------------------test----------------------------

@@ -72,7 +72,7 @@ class MCPClient():
 async def run():
     client = MCPClient()
     await client.connect_to_server(transport_type='stdio')
-    await client.process_query("請幫我在github上搜尋piggaycheng/mcp-client repository, 並找出main branch上會後一個commit的message")
+    await client.process_query("請幫我在github上搜尋piggaycheng/mcp-client repository, 並找出main branch上最後一個commit的message")
 
 
 # -------------------------test----------------------------

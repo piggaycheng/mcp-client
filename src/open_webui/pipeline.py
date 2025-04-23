@@ -35,14 +35,11 @@ class Pipeline:
 
     def pipe(self, user_message: str, model_id: str, messages: List[dict], body: dict) -> Union[str, Generator, Iterator]:
         tools = asyncio.run(self.mcp_tool_spec.to_tool_list_async())
-        tools_str = asyncio.run(self.mcp_tool_spec.fetch_tools())
-        print(tools_str, end="\n\n")
         agent = ReActAgent.from_tools(
             llm=self.llm,
             tools=tools,
             verbose=True,
         )
-        response = asyncio.run(agent.achat(user_message))
-        print(response)
+        stream_response = agent.stream_chat(user_message)
 
-        return str(response)
+        return stream_response.response_gen

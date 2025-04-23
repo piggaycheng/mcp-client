@@ -429,18 +429,19 @@ files = [
 ]
 
 [[package]]
-name = "dotenv"
-version = "0.9.9"
-description = "Deprecated package"
+name = "exceptiongroup"
+version = "1.2.2"
+description = "Backport of PEP 654 (exception groups)"
 optional = false
-python-versions = "*"
+python-versions = ">=3.7"
 groups = ["main"]
 files = [
-    {file = "dotenv-0.9.9-py2.py3-none-any.whl", hash = "sha256:29cf74a087b31dafdb5a446b6d7e11cbce8ed2741540e2339c69fbef92c94ce9"},
+    {file = "exceptiongroup-1.2.2-py3-none-any.whl", hash = "sha256:3111b9d131c238bec2f8f516e123e14ba243563fb135d3fe885990585aa7795b"},
+    {file = "exceptiongroup-1.2.2.tar.gz", hash = "sha256:47c2edf7c6738fafb49fd34290706d1a1a2f4d1c6df275526b62cbb4aa5393cc"},
 ]
 
-[package.dependencies]
-python-dotenv = "*"
+[package.extras]
+test = ["pytest (>=6)"]
 
 [[package]]
 name = "fastapi"
@@ -465,21 +466,22 @@ standard = ["email-validator (>=2.0.0)", "fastapi-cli[standard] (>=0.0.5)", "htt
 
 [[package]]
 name = "fastmcp"
-version = "2.1.2"
+version = "2.2.1"
 description = "The fast, Pythonic way to build MCP servers."
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "fastmcp-2.1.2-py3-none-any.whl", hash = "sha256:24584059ec5b6dabacb273aca4ccb852bd184ca87c495fdce50376a6eb28faaf"},
-    {file = "fastmcp-2.1.2.tar.gz", hash = "sha256:0098eb57ce9862582c30c619da4c5d8f52757e433baa18407743c2e9c48f32aa"},
+    {file = "fastmcp-2.2.1-py3-none-any.whl", hash = "sha256:0e4071c290f5b00db3fd59068cc7d832981bc7458880ba4d59b8c515fef17545"},
+    {file = "fastmcp-2.2.1.tar.gz", hash = "sha256:9c3e977349a324de011c3fcab7eec15de094e8189aef2745297cc5ca687632c2"},
 ]
 
 [package.dependencies]
-dotenv = ">=0.9.9"
-fastapi = ">=0.115.12"
+exceptiongroup = ">=1.2.2"
+httpx = ">=0.28.1"
 mcp = ">=1.6.0,<2.0.0"
 openapi-pydantic = ">=0.5.1"
+python-dotenv = ">=1.1.0"
 rich = ">=13.9.4"
 typer = ">=0.15.2"
 websockets = ">=15.0.1"

@@ -31,7 +31,8 @@ class MCPClient():
 
         if transport_type == 'sse':
             self.mcp_client = BasicMCPClient(DEMO_MCP_SERVER_URL)
-            self.mcp_tool_spec = McpToolSpec(client=self.mcp_client)
+            self.mcp_tool_spec = McpToolSpec(client=self.mcp_client, allowed_tools=[
+                                             'search_repositories', 'search_users', 'list_commits'])
         elif transport_type == 'stdio':
             self.mcp_client = BasicMCPClient(
                 command_or_url='wsl',
@@ -65,13 +66,19 @@ class MCPClient():
             tools=tools,
             verbose=True,
         )
-        response = await agent.aquery(query)
+        response = await agent.achat(query)
         print("Response:", response)
 
 
 async def run():
     client = MCPClient()
     await client.connect_to_server(transport_type='stdio')
+    await client.process_query("請幫我在github上搜尋piggaycheng/mcp-client repository, 並找出main branch上最後一個commit的message")
+
+
+async def run_sse():
+    client = MCPClient()
+    await client.connect_to_server(transport_type='sse')
     await client.process_query("請幫我在github上搜尋piggaycheng/mcp-client repository, 並找出main branch上最後一個commit的message")
 
 

@@ -466,14 +466,14 @@ standard = ["email-validator (>=2.0.0)", "fastapi-cli[standard] (>=0.0.5)", "htt
 
 [[package]]
 name = "fastmcp"
-version = "2.2.1"
+version = "2.2.3"
 description = "The fast, Pythonic way to build MCP servers."
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "fastmcp-2.2.1-py3-none-any.whl", hash = "sha256:0e4071c290f5b00db3fd59068cc7d832981bc7458880ba4d59b8c515fef17545"},
-    {file = "fastmcp-2.2.1.tar.gz", hash = "sha256:9c3e977349a324de011c3fcab7eec15de094e8189aef2745297cc5ca687632c2"},
+    {file = "fastmcp-2.2.3-py3-none-any.whl", hash = "sha256:ee2eeef9a4d3d7a3f2d99d16f3fba0f03056e91835bc13bd8974e1a2a4ce8069"},
+    {file = "fastmcp-2.2.3.tar.gz", hash = "sha256:15d1ff4b469a02df4c028500a7592c4e44c3259ac01b6222145fbf634edde2b8"},
 ]
 
 [package.dependencies]

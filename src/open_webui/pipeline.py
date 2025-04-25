@@ -11,6 +11,7 @@ class Pipeline:
         MODEL: str = Field(default="")
         OLLAMA_HOST: str = Field(default="")
         DEMO_MCP_SERVER_URL: str = Field(default="")
+        GITHUB_MCP_SERVER_URL: str = Field(default="")
 
     def __init__(self):
         self.valves = self.Valves()
@@ -22,7 +23,7 @@ class Pipeline:
             base_url=self.valves.OLLAMA_HOST,
             request_timeout=60
         )
-        self.mcp_client = BasicMCPClient(self.valves.DEMO_MCP_SERVER_URL)
+        self.mcp_client = BasicMCPClient(self.valves.GITHUB_MCP_SERVER_URL)
         self.mcp_tool_spec = McpToolSpec(
             client=self.mcp_client,
             allowed_tools=[
@@ -31,10 +32,16 @@ class Pipeline:
                 'list_commits'
             ]
         )
+        # self.demo_mcp_client = BasicMCPClient(self.valves.DEMO_MCP_SERVER_URL)
+        # self.demo_mcp_tool_spec = McpToolSpec(
+        #     client=self.demo_mcp_client
+        # )
         print('startup complete')
 
     def pipe(self, user_message: str, model_id: str, messages: List[dict], body: dict) -> Union[str, Generator, Iterator]:
         tools = asyncio.run(self.mcp_tool_spec.to_tool_list_async())
+        # demo_tools = asyncio.run(self.demo_mcp_tool_spec.to_tool_list_async())
+        # final_tools = tools + demo_tools
         agent = ReActAgent.from_tools(
             llm=self.llm,
             tools=tools,
